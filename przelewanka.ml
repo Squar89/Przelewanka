@@ -14,17 +14,17 @@ let przelewanka input_array =
         Array.fold_left (fun a (x, _) -> nwd (min x a) (max x a)) 0 glass in
     let test1 = Array.for_all (fun (_, y) -> y mod nwdx = 0) glass in
     let test2 = Array.exists (fun (x, y) -> (x = y || y = 0)) glass in
-    let yt = Array.init n (fun i -> snd glass.(i)) in
-    let hasht = Hashtbl.create n in
+    let yt = Array.init length (fun i -> snd glass.(i)) in
+    let hasht = Hashtbl.create length in
     let moves = ref 0 in
     let result = ref 0 in
-    let q = Queue.create in
+    let q = Queue.create () in
     let check_result =
         if Hashtbl.mem hasht yt then
         begin
-            Queue.clear;
-            result := Hashtbl.find hasht yt; end
-            true
+            Queue.clear q;
+            result := Hashtbl.find hasht yt;
+            true end
         else false
     in
     let hasht_update newstate =
@@ -54,15 +54,15 @@ let przelewanka input_array =
     in
     if test1 && test2 then
     begin
-        Hashtbl.add hasht (Array.make n 0) 0;
-        Queue.push (Array.make n 0) q;
+        Hashtbl.add hasht (Array.make length 0) 0;
+        Queue.push (Array.make length 0) q;
         while not(Queue.is_empty q) do
-            let state = Queue.q pop in
+            let state = Queue.pop q in
             if not(check_result) then
                 moves := Hashtbl.find hasht state;
-                for i = 0 to (n - 1) do
+                for i = 0 to (length - 1) do
                     fill_empty state i;
-                    for j = 0 to (n - 1) do
+                    for j = 0 to (length - 1) do
                     if not(i = j) then pour i j state;
                     done              
                 done
