@@ -78,3 +78,43 @@ let przelewanka input_array =
     end
     else if glass = [||] then 0
         else -1;;
+
+(* TESTY *)
+assert(przelewanka [||] = 0);;
+assert(przelewanka [|(0,0)|] = 0);;
+assert(przelewanka [|(5,0)|] = 0);;
+assert(przelewanka [|(5,1)|] = -1);;
+assert(przelewanka [|(5,5)|] = 1);;
+assert(przelewanka [|(5,0);(1,0)|] = 0);;
+assert(przelewanka [|(1,0);(5,0)|] = 0);;
+assert(przelewanka [|(5,5);(1,0)|] = 1);;
+assert(przelewanka [|(5,0);(1,1)|] = 1);;
+assert(przelewanka [|(5,1);(1,0)|] = 2);;
+assert(przelewanka [|(5,1);(1,1)|] = 3);;
+assert(przelewanka [|(5,2);(1,0)|] = 4);;
+assert(przelewanka [|(5,4);(1,0)|] = 3);;
+assert(przelewanka [|(5,5);(1,1)|] = 2);;
+assert(przelewanka [|(1,0);(5,5)|] = 1);;
+assert(przelewanka [|(1,1);(5,0)|] = 1);;
+assert(przelewanka [|(1,0);(5,1)|] = 2);;
+assert(przelewanka [|(1,1);(5,1)|] = 3);;
+assert(przelewanka [|(1,0);(5,2)|] = 4);;
+assert(przelewanka [|(1,0);(5,4)|] = 3);;
+assert(przelewanka [|(1,1);(5,5)|] = 2);;
+assert(przelewanka [|(5, 0); (3, 0); (1, 0) |] = 0);;
+assert(przelewanka [|(5, 5); (3, 3); (1, 1) |] = 3);;
+assert(przelewanka [|(5, 0); (3, 0); (1, 0) |] = 0);;
+assert(przelewanka [|(5, 5); (3, 3); (1, 1) |] = 3);;
+assert(przelewanka [|(5, 3); (3, 3); (1, 0) |] = 3);;
+assert(przelewanka [|(5, 2); (3, 2); (1, 0) |] = 4);;
+assert(przelewanka [|(5, 1); (3, 1); (7, 1) |] = -1);;
+assert(przelewanka [|(5, 1); (3, 1); (7, 0) |] = 7);;
+assert(przelewanka [|(5,1); (3, 1); (7, 7) |] = 7);;
+assert(przelewanka [|(5,0); (3, 1); (7, 1) |] = 6);;
+assert(przelewanka [|(5,1); (3, 0); (7, 1) |] = 7);;
+assert(przelewanka [|(5,5); (3, 1); (7, 1) |] = 5);;
+assert(przelewanka [|(5,1); (3, 0); (7, 1) |] = 7);;
+assert(przelewanka [|(5,3); (3, 3); (7, 1) |] = 4);;
+assert(przelewanka [|(5,3); (3, 0); (7, 4) |] = 3);;
+assert(przelewanka [|(5,0); (3, 3); (7, 4) |] = 2);;
+assert(przelewanka [|(5,0); (3, 0); (7, 7) |] = 1);;
