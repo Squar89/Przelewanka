@@ -2,73 +2,79 @@ let przelewanka input_array =
     let glass =
         let input_list = Array.to_list input_array in
         let filter = List.filter
-            (fun (x, _) -> x = 0) input_list in
+            (fun (x, _) -> not(x = 0)) input_list in
         Array.of_list filter
     in
     let length = Array.length glass in
     let rec nwd a b =
-        if b = 0 then a
-        else nwd b (b mod a)
+        if a = 0 then b
+        else nwd (b mod a) a
     in
-    let nwdx =
+    let nwd_capacity =
         Array.fold_left (fun a (x, _) -> nwd (min x a) (max x a)) 0 glass in
-    let test1 = Array.for_all (fun (_, y) -> y mod nwdx = 0) glass in
+    let desired_state = Array.init length (fun i -> snd glass.(i)) in
+    let test1 = Array.for_all (fun (_, y) -> y mod nwd_capacity = 0) glass in
     let test2 = Array.exists (fun (x, y) -> (x = y || y = 0)) glass in
-    let yt = Array.init length (fun i -> snd glass.(i)) in
-    let hasht = Hashtbl.create length in
-    let moves = ref 0 in
-    let result = ref 0 in
+    let hash_table = Hashtbl.create 1000003 in
+    let moves = ref (-1) in
     let q = Queue.create () in
-    let check_result =
-        if Hashtbl.mem hasht yt then
+    let check_result () =
+        if Hashtbl.mem hash_table desired_state then
         begin
             Queue.clear q;
-            result := Hashtbl.find hasht yt;
-            true end
+            true
+        end
         else false
     in
-    let hasht_update newstate =
-        if not(Hashtbl.mem hasht newstate) then
-            Hashtbl.add hasht newstate (!moves + 1);
-            Queue.push newstate q;
+    let hash_update new_state =
+        if not(Hashtbl.mem hash_table new_state) then
+        begin
+            Hashtbl.add hash_table new_state (!moves + 1);
+            Queue.push new_state q
+        end
     in
     let fill_empty state i =
-        let statec = Array.copy state in
-        statec.(i) <- fst glass.(i);
-        hasht_update statec;
-        statec.(i) <- 0;
-        hasht_update statec;
+        let state_fill = Array.copy state in
+        let state_empty = Array.copy state in
+        state_fill.(i) <- fst glass.(i);
+        hash_update state_fill;
+        state_empty.(i) <- 0;
+        hash_update state_empty
     in
-    let pour i j state =
-        let statec = Array.copy state in
+    let pour state i j =
+        let state_copy = Array.copy state in
         if state.(j) + state.(i) <= fst glass.(j) then
         begin
-            statec.(i) <- 0;
-            statec.(j) <- state.(j) + state.(i);
-            hasht_update statec; end
+            state_copy.(i) <- 0;
+            state_copy.(j) <- state.(j) + state.(i);
+            hash_update state_copy
+        end
         else
         begin
-            statec.(i) <- state.(i) - (fst glass.(j) - state.(j));
-            statec.(j) <- fst glass.(j);
-            hasht_update statec; end
+            state_copy.(i) <- state.(i) - (fst glass.(j) - state.(j));
+            state_copy.(j) <- fst glass.(j);
+            hash_update state_copy
+        end
     in
     if test1 && test2 then
     begin
-        Hashtbl.add hasht (Array.make length 0) 0;
-        Queue.push (Array.make length 0) q;
+        hash_update (Array.make length 0);
         while not(Queue.is_empty q) do
             let state = Queue.pop q in
-            if not(check_result) then
-                moves := Hashtbl.find hasht state;
+            if not(check_result ()) then
+            begin
+                moves := Hashtbl.find hash_table state;
                 for i = 0 to (length - 1) do
                     fill_empty state i;
                     for j = 0 to (length - 1) do
-                    if not(i = j) then pour i j state;
-                    done              
+                    if not(i = j) && not(state.(i) = 0) then pour state i j
+                    done
                 done
+            end
         done;
-        if check_result then
-            !result
-        else -1 end
+        if Hashtbl.mem hash_table desired_state then
+            Hashtbl.find hash_table desired_state
+        else -1
+    end
     else if glass = [||] then 0
         else -1;;
