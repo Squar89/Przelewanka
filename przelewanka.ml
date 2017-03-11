@@ -1,5 +1,5 @@
 (*  Autor: Jakub Wróblewski gr. 5 386401*)
-(*  Recenzent: Rafał Trypus gr. ? 386???*)
+(*  Recenzent: Rafał Trypus gr. 3 386444*)
 
 
 let przelewanka input_array =
